@@ -47,4 +47,4 @@ These programs will test your skills and encourage you to explore more advanced 
 
 1. Clone this repository to your local machine:
    ```bash
-   git clone https://github.com/th-shivam/way_to_python.git
+   git clone https://github.com/th-shivam/way-to-python.git
