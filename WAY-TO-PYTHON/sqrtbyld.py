@@ -1,59 +1,57 @@
-INFINITY_ = 9999999
+INFINITY = 9999999
 
-# Function to find the square root of
-# a number by using long division method
-def sqrtByLongDivision(n):
-    i = 0
-    udigit, j = 0, 0  # Loop counters
-    cur_divisor = 0.0
-    quotient_units_digit = 0.0
-    cur_quotient = 0.0
-    cur_dividend = 0.0
-    cur_remainder = 0.0
-    a = [0] * 10
+def sqrt_by_long_division(n: int) -> int:
+    """
+    Calculate the integer square root of a number using the long division method.
     
-    # Dividing the number into segments
-    while (n > 0):
-        a[i] = n % 100
-        n = n // 100
-        i += 1
+    Args:
+        n (int): The number to find the square root of.
     
-    # Last index of the array of segments
-    i -= 1
-    
-    # Start long division from the last segment (j=i)
-    for j in range(i, -1, -1):
-        # Initialising the remainder to the maximum value
-        cur_remainder = INFINITY_
-        
-        # Including the next segment in new dividend
-        cur_dividend = cur_dividend * 100 + a[j]
-        
-        # Loop to check for the perfect square closest to each segment
-        for udigit in range(10):
-            # This condition is to find the divisor after adding a digit
-            if (cur_remainder >= cur_dividend
-                    - ((cur_divisor * 10 + udigit) * udigit)
-                    and cur_dividend
-                    - ((cur_divisor * 10 + udigit) * udigit) >= 0):
-                # Calculating the remainder
-                cur_remainder = cur_dividend \
-                    - ((cur_divisor * 10 + udigit) * udigit)
-                
-                # Updating the units digit of the quotient
-                quotient_units_digit = udigit
-        
-        # Adding units digit to the quotient
-        cur_quotient = cur_quotient * 10 + quotient_units_digit
-        
-        # New divisor is two times quotient
-        cur_divisor = cur_quotient * 2
-        
-        # Including the remainder in new dividend
-        cur_dividend = cur_remainder
-    
-    return cur_quotient
+    Returns:
+        int: The integer part of the square root.
+    """
+    if n < 0:
+        raise ValueError("Square root is not defined for negative numbers.")
+
+    segments = [0] * 10  # Holds digit pairs from the number
+    num_segments = 0
+
+    # Break the number into 2-digit segments (right to left)
+    while n > 0:
+        segments[num_segments] = n % 100
+        n //= 100
+        num_segments += 1
+
+    num_segments -= 1  # Last valid index
+
+    quotient = 0
+    divisor = 0
+    dividend = 0
+
+    # Start long division from most significant 2-digit segment
+    for i in range(num_segments, -1, -1):
+        dividend = dividend * 100 + segments[i]
+        remainder = INFINITY
+        unit_digit = 0
+
+        # Find the best digit to append to current quotient
+        for d in range(10):
+            candidate = (divisor * 10 + d) * d
+            if dividend >= candidate and dividend - candidate <= remainder:
+                remainder = dividend - candidate
+                unit_digit = d
+
+        quotient = quotient * 10 + unit_digit
+        divisor = quotient * 2
+        dividend = remainder
+
+    return quotient
+
 
 # Driver code
-x = int(input("Enter your number :"))
-print(sqrtByLongDivision(x))
+if __name__ == "__main__":
+    try:
+        x = int(input("Enter a non-negative integer: "))
+        print(f"Square root (integer part) = {sqrt_by_long_division(x)}")
+    except ValueError as ve:
+        print(f"Error: {ve}")
